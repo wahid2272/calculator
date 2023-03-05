@@ -1,5 +1,7 @@
 trigger:
 - main
+
+steps:
 - task: Docker@2
   inputs:
     containerRegistry: 'Docker Registry'
