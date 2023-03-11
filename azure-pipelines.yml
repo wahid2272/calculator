@@ -12,7 +12,7 @@ steps:
 - task: DockerCompose@0
   inputs:
     containerregistrytype: 'Azure Container Registry'
-    azureSubscription: 'azure app service'
+    azureSubscription: 'Resource Group Service Connection'
     azureContainerRegistry: '{"loginServer":"calculators.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service/providers/Microsoft.ContainerRegistry/registries/calculators"}'
     dockerComposeFile: '**/docker-compose.yml'
     action: 'Build services'
@@ -20,7 +20,7 @@ steps:
 - task: DockerCompose@0
   inputs:
     containerregistrytype: 'Azure Container Registry'
-    azureSubscription: 'azure app service'
+    azureSubscription: 'Resource Group Service Connection'
     azureContainerRegistry: '{"loginServer":"calculators.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service/providers/Microsoft.ContainerRegistry/registries/calculators"}'
     dockerComposeFile: '**/docker-compose.yml'
     action: 'Push services'
