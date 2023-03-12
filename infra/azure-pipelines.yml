@@ -4,40 +4,55 @@
 # https://aka.ms/yaml
 
 trigger:
-- main
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - infra/*
 
-jobs:
-- job: staging
-  displayName: 'Deploy to staging environment'
+stages:
+- stage: app_service_staging
+  displayName: 'Create app service for staging'
 
-  steps:
-  - task: AzureResourceManagerTemplateDeployment@3
-    inputs:
-      deploymentScope: 'Resource Group'
-      azureResourceManagerConnection: 'Resource Group Service Connection'
-      subscriptionId: '7122b890-4d38-46fb-8c3d-9e0a76c39cc6'
-      action: 'Create Or Update Resource Group'
-      resourceGroupName: 'app_service'
-      location: 'North Europe'
-      templateLocation: 'Linked artifact'
-      csmFile: './azuredeploy.json'
-      csmParametersFile: './azuredeploy.parameters.json'
-      deploymentMode: 'Incremental'
+  jobs:
+  - job: staging
+    displayName: 'Deploy to staging environment'
 
-- job: production
-  displayName: 'Deploy to production environment'
-  
-  steps:
-  - task: AzureResourceManagerTemplateDeployment@3
-    inputs:
-      deploymentScope: 'Resource Group'
-      azureResourceManagerConnection: 'Resource Group Service Connection'
-      subscriptionId: '7122b890-4d38-46fb-8c3d-9e0a76c39cc6'
-      action: 'Create Or Update Resource Group'
-      resourceGroupName: 'app_service'
-      location: 'North Europe'
-      templateLocation: 'Linked artifact'
-      csmFile: './azuredeploy.json'
-      csmParametersFile: './azuredeploy.parameters.json'
-      deploymentMode: 'Incremental'
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: 'Resource Group fro Staging Env'
+        subscriptionId: '7122b890-4d38-46fb-8c3d-9e0a76c39cc6'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: 'app_service_staging'
+        location: 'North Europe'
+        templateLocation: 'Linked artifact'
+        csmFile: './azuredeploy.json'
+        csmParametersFile: './azuredeploy.parameters.json'
+        deploymentMode: 'Incremental'
+
+
+- stage: app_service_production
+  displayName: 'Create app service for production '
+  dependsOn: app_service_staging
+
+  jobs:  
+  - job: production
+    displayName: 'Deploy to production environment'
+    
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: 'Resource Group for Prod Env'
+        subscriptionId: '7122b890-4d38-46fb-8c3d-9e0a76c39cc6'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: 'app_service'
+        location: 'North Europe'
+        templateLocation: 'Linked artifact'
+        csmFile: './azuredeploy.json'
+        csmParametersFile: './azuredeploy.parameters.json'
+        deploymentMode: 'Incremental'
       
