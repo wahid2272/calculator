@@ -1,0 +1,66 @@
+trigger:
+  branches:
+    include:
+      - main   
+  paths:
+    include:
+    - application/*
+    exclude:
+    - infra/*
+
+stages:
+- stage: docker_image_to_staging
+  displayName: 'Build and Push Docker Image to Staging'
+
+  jobs:
+  - deployment: 'to_staging'
+    environment: 'Staging'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DockerCompose@0
+           inputs:
+             containerregistrytype: 'Azure Container Registry'
+             azureSubscription: 'Resource Group fro Staging Env'
+             azureContainerRegistry: '{"loginServer":"calculatorstaging.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service_staging/providers/Microsoft.ContainerRegistry/registries/calculatorStaging"}'
+             dockerComposeFile: '**/docker-compose.yml'
+             action: 'Build services'
+          
+
+          
+          - task: DockerCompose@0
+           inputs:
+             containerregistrytype: 'Azure Container Registry'
+             azureSubscription: 'Resource Group fro Staging Env'
+             azureContainerRegistry: '{"loginServer":"calculatorstaging.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service_staging/providers/Microsoft.ContainerRegistry/registries/calculatorStaging"}'
+             dockerComposeFile: '**/docker-compose.yml'
+             action: 'Push services'
+
+
+- stage: docker_image_to_production
+  displayName: 'Build and Push to production environment'
+  dependsOn: docker_image_to_staging
+
+  jobs:
+  - deployment: 'deploy_to_production'
+    environment: 'Production'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DockerCompose@0
+            inputs:
+              containerregistrytype: 'Azure Container Registry'
+              azureSubscription: 'Resource Group for Prod Env'
+              azureContainerRegistry: '{"loginServer":"calculators.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service/providers/Microsoft.ContainerRegistry/registries/calculators"}'
+              dockerComposeFile: '**/docker-compose.yml'
+              action: 'Build services'
+
+         - task: DockerCompose@0
+           inputs:
+             containerregistrytype: 'Azure Container Registry'
+             azureSubscription: 'Resource Group for Prod Env'
+             azureContainerRegistry: '{"loginServer":"calculators.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service/providers/Microsoft.ContainerRegistry/registries/calculators"}'
+             dockerComposeFile: '**/docker-compose.yml'
+             action: 'Push services'
