@@ -1,5 +1,7 @@
 trigger:
-- main
+  branches:
+    include:
+      - main   
   paths:
     include:
     - application/*
@@ -10,40 +12,48 @@ stages:
 - stage: image_build
   displayName: 'Build Docker Image'
 
-  steps:
-  - task: DockerCompose@0
-    inputs:
-      containerregistrytype: 'Azure Container Registry'
-      azureSubscription: 'Resource Group Service Connection'
-      azureContainerRegistry: '{"loginServer":"calculators.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service/providers/Microsoft.ContainerRegistry/registries/calculators"}'
-      dockerComposeFile: '**/docker-compose.yml'
-      action: 'Build services'
+  jobs:
+    - job: docker_build
+      steps:
+      - task: DockerCompose@0
+        inputs:
+          containerregistrytype: 'Azure Container Registry'
+          azureSubscription: 'Azure for Students(7122b890-4d38-46fb-8c3d-9e0a76c39cc6)'
+          azureContainerRegistry: '{"loginServer":"calculators.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service/providers/Microsoft.ContainerRegistry/registries/calculators"}'
+          dockerComposeFile: '**/docker-compose.yml'
+          action: 'Build services'
 
-  - stage: deploy_to_staging
-    displayName: 'Deploy to staging environment'
-    jobs:
-    - deployment: 'deploy_to_test'
-      environment: 'Staging'
-      steps:
-      - task: DockerCompose@0
-        inputs:
-          containerregistrytype: 'Azure Container Registry'
-          azureSubscription: 'Resource Group Service Connection'
-          azureContainerRegistry: '{"loginServer":"calculators.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service/providers/Microsoft.ContainerRegistry/registries/calculators"}'
-          dockerComposeFile: '**/docker-compose.yml'
-          action: 'Push services'
-  
-  - stage: deploy_to_production
-    displayName: 'Deploy to production environment'
-    dependsOn: deploy_to_staging
-    jobs:
-    - deployment: 'deploy_to_production'
-      environment: 'Production'
-      steps:
-      - task: DockerCompose@0
-        inputs:
-          containerregistrytype: 'Azure Container Registry'
-          azureSubscription: 'Resource Group Service Connection'
-          azureContainerRegistry: '{"loginServer":"calculators.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service/providers/Microsoft.ContainerRegistry/registries/calculators"}'
-          dockerComposeFile: '**/docker-compose.yml'
-          action: 'Push services'
+- stage: deploy_to_staging
+  displayName: 'Deploy to staging environment'
+  jobs:
+  - deployment: 'deploy_to_test'
+    environment: 'Staging'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DockerCompose@0
+            inputs:
+              containerregistrytype: 'Azure Container Registry'
+              azureSubscription: 'Resource Group fro Staging Env'
+              azureContainerRegistry: '{"loginServer":"calculatorstaging.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service_staging/providers/Microsoft.ContainerRegistry/registries/calculatorStaging"}'
+              dockerComposeFile: '**/docker-compose.yml'
+              action: 'Push services'
+
+- stage: deploy_to_production
+  displayName: 'Deploy to production environment'
+  dependsOn: deploy_to_staging
+  jobs:
+  - deployment: 'deploy_to_production'
+    environment: 'Production'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DockerCompose@0
+            inputs:
+              containerregistrytype: 'Azure Container Registry'
+              azureSubscription: 'Resource Group for Prod Env'
+              azureContainerRegistry: '{"loginServer":"calculators.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service/providers/Microsoft.ContainerRegistry/registries/calculators"}'
+              dockerComposeFile: '**/docker-compose.yml'
+              action: 'Push services'
