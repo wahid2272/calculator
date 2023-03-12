@@ -30,7 +30,7 @@ stages:
         location: 'North Europe'
         templateLocation: 'Linked artifact'
         csmFile: $(Build.SourcesDirectory)/infra/azuredeploy.json
-        csmParametersFile: $(Build.SourcesDirectory)/infra/azuredeploy.parameters.json
+        csmParametersFile: $(Build.SourcesDirectory)/infra/staging.parameters.json
         deploymentMode: 'Incremental'
 
 
@@ -53,6 +53,6 @@ stages:
         location: 'North Europe'
         templateLocation: 'Linked artifact'
         csmFile: $(Build.SourcesDirectory)/infra/azuredeploy.json
-        csmParametersFile: $(Build.SourcesDirectory)/infra/azuredeploy.parameters.json
+        csmParametersFile: $(Build.SourcesDirectory)/infra/production.parameters.json
         deploymentMode: 'Incremental'
       
