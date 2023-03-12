@@ -29,8 +29,8 @@ stages:
         resourceGroupName: 'app_service_staging'
         location: 'North Europe'
         templateLocation: 'Linked artifact'
-        csmFile: './azuredeploy.json'
-        csmParametersFile: './azuredeploy.parameters.json'
+        csmFile: $(Build.SourcesDirectory)/infra/azuredeploy.json
+        csmParametersFile: $(Build.SourcesDirectory)/infra/azuredeploy.parameters.json
         deploymentMode: 'Incremental'
 
 
@@ -52,7 +52,7 @@ stages:
         resourceGroupName: 'app_service'
         location: 'North Europe'
         templateLocation: 'Linked artifact'
-        csmFile: './azuredeploy.json'
-        csmParametersFile: './azuredeploy.parameters.json'
+        csmFile: $(Build.SourcesDirectory)/infra/azuredeploy.json
+        csmParametersFile: $(Build.SourcesDirectory)/infra/azuredeploy.parameters.json
         deploymentMode: 'Incremental'
       
