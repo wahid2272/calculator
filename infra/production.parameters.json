@@ -12,7 +12,7 @@
             "value": "North Europe"
         },
         "hostingPlanName": {
-            "value": "ASP-appservice-962f"
+            "value": "production-calculator"
         },
         "serverFarmResourceGroup": {
             "value": "app_service"

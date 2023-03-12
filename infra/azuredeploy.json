@@ -91,7 +91,7 @@
                         },
                         {
                             "name": "DOCKER_ENABLE_CI",
-                            "value": "false"
+                            "value": "true"
                         }
                     ],
                     "vnetRouteAllEnabled": true,
