@@ -9,24 +9,11 @@ trigger:
     - infra/*
 
 stages:
-- stage: image_build
-  displayName: 'Build Docker Image'
+- stage: docker_image_to_staging
+  displayName: 'Build and Push Docker Image to Staging'
 
   jobs:
-    - job: docker_build
-      steps:
-      - task: DockerCompose@0
-        inputs:
-          containerregistrytype: 'Azure Container Registry'
-          azureSubscription: 'Azure for Students(7122b890-4d38-46fb-8c3d-9e0a76c39cc6)'
-          azureContainerRegistry: '{"loginServer":"calculators.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service/providers/Microsoft.ContainerRegistry/registries/calculators"}'
-          dockerComposeFile: '**/docker-compose.yml'
-          action: 'Build services'
-
-- stage: deploy_to_staging
-  displayName: 'Deploy to staging environment'
-  jobs:
-  - deployment: 'deploy_to_staging'
+  - deployment: 'to_staging'
     environment: 'Staging'
     strategy:
       runOnce:
@@ -35,14 +22,24 @@ stages:
           - task: DockerCompose@0
             inputs:
               containerregistrytype: 'Azure Container Registry'
-              azureSubscription: 'Azure for Students(7122b890-4d38-46fb-8c3d-9e0a76c39cc6)'
+              azureSubscription: 'Resource Group fro Staging Env'
+              azureContainerRegistry: '{"loginServer":"calculatorstaging.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service_staging/providers/Microsoft.ContainerRegistry/registries/calculatorStaging"}'
+              dockerComposeFile: '**/docker-compose.yml'
+              action: 'Build services'
+          
+          - task: DockerCompose@0
+            inputs:
+              containerregistrytype: 'Azure Container Registry'
+              azureSubscription: 'Resource Group fro Staging Env'
               azureContainerRegistry: '{"loginServer":"calculatorstaging.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service_staging/providers/Microsoft.ContainerRegistry/registries/calculatorStaging"}'
               dockerComposeFile: '**/docker-compose.yml'
               action: 'Push services'
 
-- stage: deploy_to_production
-  displayName: 'Deploy to production environment'
-  dependsOn: deploy_to_staging
+
+- stage: docker_image_to_production
+  displayName: 'Build and Push to production environment'
+  dependsOn: to_staging
+
   jobs:
   - deployment: 'deploy_to_production'
     environment: 'Production'
@@ -53,7 +50,15 @@ stages:
           - task: DockerCompose@0
             inputs:
               containerregistrytype: 'Azure Container Registry'
-              azureSubscription: 'Azure for Students(7122b890-4d38-46fb-8c3d-9e0a76c39cc6)'
+              azureSubscription: 'Resource Group for Prod Env'
+              azureContainerRegistry: '{"loginServer":"calculators.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service/providers/Microsoft.ContainerRegistry/registries/calculators"}'
+              dockerComposeFile: '**/docker-compose.yml'
+              action: 'Build services'
+
+          - task: DockerCompose@0
+            inputs:
+              containerregistrytype: 'Azure Container Registry'
+              azureSubscription: 'Resource Group for Prod Env'
               azureContainerRegistry: '{"loginServer":"calculators.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service/providers/Microsoft.ContainerRegistry/registries/calculators"}'
               dockerComposeFile: '**/docker-compose.yml'
               action: 'Push services'
