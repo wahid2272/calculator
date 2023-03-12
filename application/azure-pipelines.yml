@@ -38,7 +38,7 @@ stages:
 
 - stage: docker_image_to_production
   displayName: 'Build and Push to production environment'
-  dependsOn: to_staging
+  dependsOn: docker_image_to_staging
 
   jobs:
   - deployment: 'deploy_to_production'
