@@ -19,21 +19,22 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: DockerCompose@0
+          - task: Docker@2
             inputs:
-              containerregistrytype: 'Azure Container Registry'
-              azureSubscription: 'Azure for Students(7122b890-4d38-46fb-8c3d-9e0a76c39cc6)'
-              azureContainerRegistry: '{"loginServer":"calculatorstaging.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service_staging/providers/Microsoft.ContainerRegistry/registries/calculatorStaging"}'
-              dockerComposeFile: '**/docker-compose.yml'
-              action: 'Build services'
+              containerRegistry: 'Docker Registry Service Connection'
+              repository: 'calculator_staging'
+              command: 'buildAndPush'
+              Dockerfile: '$(Build.SourcesDirectory)/application/Dockerfile'
           
-          - task: DockerCompose@0
-            inputs:
-              containerregistrytype: 'Azure Container Registry'
-              azureSubscription: 'Resource Group fro Staging Env'
-              azureContainerRegistry: '{"loginServer":"calculatorstaging.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service_staging/providers/Microsoft.ContainerRegistry/registries/calculatorStaging"}'
-              dockerComposeFile: '**/docker-compose.yml'
-              action: 'Push services'
+
+          
+          #- task: DockerCompose@0
+          #  inputs:
+          #    containerregistrytype: 'Azure Container Registry'
+          #    azureSubscription: 'Resource Group fro Staging Env'
+          #    azureContainerRegistry: '{"loginServer":"calculatorstaging.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service_staging/providers/Microsoft.ContainerRegistry/registries/calculatorStaging"}'
+          #    dockerComposeFile: '**/docker-compose.yml'
+          #    action: 'Push services'
 
 
 - stage: docker_image_to_production
@@ -55,10 +56,10 @@ stages:
               dockerComposeFile: '**/docker-compose.yml'
               action: 'Build services'
 
-          - task: DockerCompose@0
-            inputs:
-              containerregistrytype: 'Azure Container Registry'
-              azureSubscription: 'Resource Group for Prod Env'
-              azureContainerRegistry: '{"loginServer":"calculators.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service/providers/Microsoft.ContainerRegistry/registries/calculators"}'
-              dockerComposeFile: '**/docker-compose.yml'
-              action: 'Push services'
+        #  - task: DockerCompose@0
+        #    inputs:
+        #      containerregistrytype: 'Azure Container Registry'
+        #      azureSubscription: 'Resource Group for Prod Env'
+        #      azureContainerRegistry: '{"loginServer":"calculators.azurecr.io", "id" : "/subscriptions/7122b890-4d38-46fb-8c3d-9e0a76c39cc6/resourceGroups/app_service/providers/Microsoft.ContainerRegistry/registries/calculators"}'
+        #      dockerComposeFile: '**/docker-compose.yml'
+        #      action: 'Push services'
