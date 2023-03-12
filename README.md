@@ -20,3 +20,5 @@ React Usage
 ---
 
 Using same service Principal
+
+This pipeline needs permission to access 2 resources before this run can continue to Build and Push Docker Image to Staging
