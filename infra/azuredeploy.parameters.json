@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subscriptionId": {
+            "value": "7122b890-4d38-46fb-8c3d-9e0a76c39cc6"
+        },
+        "name": {
+            "value": "my-calculator"
+        },
+        "location": {
+            "value": "North Europe"
+        },
+        "hostingPlanName": {
+            "value": "ASP-appservice-962f"
+        },
+        "serverFarmResourceGroup": {
+            "value": "app_service"
+        },
+        "alwaysOn": {
+            "value": false
+        },
+        "ftpsState": {
+            "value": "FtpsOnly"
+        },
+        "sku": {
+            "value": "Basic"
+        },
+        "skuCode": {
+            "value": "B1"
+        },
+        "numberOfWorkers": {
+            "value": "1"
+        },
+        "workerSize": {
+            "value": "0"
+        },
+        "workerSizeId": {
+            "value": "0"
+        },
+        "linuxFxVersion": {
+            "value": "DOCKER|calculators.azurecr.io/wahid2272calculator_build-docker:latest"
+        },
+        "dockerRegistryUrl": {
+            "value": "https://calculators.azurecr.io"
+        },
+        "dockerRegistryUsername": {
+            "value": "calculators"
+        },
+        "dockerRegistryPassword": {
+            "value": "+V5vqi2suY3o5FqKAGlFYuHUbGs4zUARhE2IHRvFhq+ACRC+8eha"
+        },
+        "dockerRegistryStartupCommand": {
+            "value": ""
+        }
+    }
+}

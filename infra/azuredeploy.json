@@ -1,0 +1,188 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subscriptionId": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "hostingPlanName": {
+            "type": "string"
+        },
+        "serverFarmResourceGroup": {
+            "type": "string"
+        },
+        "alwaysOn": {
+            "type": "bool"
+        },
+        "ftpsState": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string"
+        },
+        "skuCode": {
+            "type": "string"
+        },
+        "workerSize": {
+            "type": "string"
+        },
+        "workerSizeId": {
+            "type": "string"
+        },
+        "numberOfWorkers": {
+            "type": "string"
+        },
+        "linuxFxVersion": {
+            "type": "string"
+        },
+        "dockerRegistryUrl": {
+            "type": "string"
+        },
+        "dockerRegistryUsername": {
+            "type": "string"
+        },
+        "dockerRegistryPassword": {
+            "type": "securestring"
+        },
+        "dockerRegistryStartupCommand": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "inboundSubnetDeployment": "inboundSubnetDeployment",
+        "outboundSubnetDeployment": "outboundSubnetDeployment"
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('name')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+                "[variables('outboundSubnetDeployment')]"
+            ],
+            "properties": {
+                "name": "[parameters('name')]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_URL",
+                            "value": "[parameters('dockerRegistryUrl')]"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                            "value": "[parameters('dockerRegistryUsername')]"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                            "value": "[parameters('dockerRegistryPassword')]"
+                        },
+                        {
+                            "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                            "value": "false"
+                        },
+                        {
+                            "name": "DOCKER_ENABLE_CI",
+                            "value": "false"
+                        }
+                    ],
+                    "vnetRouteAllEnabled": true,
+                    "linuxFxVersion": "[parameters('linuxFxVersion')]",
+                    "appCommandLine": "[parameters('dockerRegistryStartupCommand')]",
+                    "alwaysOn": "[parameters('alwaysOn')]",
+                    "ftpsState": "[parameters('ftpsState')]"
+                },
+                "serverFarmId": "[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+                "clientAffinityEnabled": false,
+                "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'calculator-vpc', 'calculator-subnet')]",
+                "httpsOnly": true,
+                "publicNetworkAccess": "Enabled"
+            }
+        },
+        {
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('hostingPlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[parameters('location')]",
+            "kind": "linux",
+            "tags": {},
+            "dependsOn": [],
+            "properties": {
+                "name": "[parameters('hostingPlanName')]",
+                "workerSize": "[parameters('workerSize')]",
+                "workerSizeId": "[parameters('workerSizeId')]",
+                "numberOfWorkers": "[parameters('numberOfWorkers')]",
+                "reserved": true,
+                "zoneRedundant": false
+            },
+            "sku": {
+                "Tier": "[parameters('sku')]",
+                "Name": "[parameters('skuCode')]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-07-01",
+            "location": "northeurope",
+            "name": "calculator-vpc",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": []
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-07-01",
+            "name": "[variables('outboundSubnetDeployment')]",
+            "resourceGroup": "",
+            "subscriptionId": "",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/virtualNetworks/subnets",
+                            "apiVersion": "2020-07-01",
+                            "name": "calculator-vpc/calculator-subnet",
+                            "properties": {
+                                "delegations": [
+                                    {
+                                        "name": "delegation",
+                                        "properties": {
+                                            "serviceName": "Microsoft.Web/serverfarms"
+                                        }
+                                    }
+                                ],
+                                "serviceEndpoints": [
+                                    {
+                                        "service": "Microsoft.Storage"
+                                    }
+                                ],
+                                "addressPrefix": "10.0.0.0/24"
+                            }
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', 'calculator-vpc')]"
+            ]
+        }
+    ]
+}
