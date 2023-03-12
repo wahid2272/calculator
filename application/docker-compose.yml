@@ -1,4 +1,6 @@
 version: '3'
 services:
   build-docker:
-    build: ./application/Dockerfile
+    build:
+      context: $(Build.SourcesDirectory)/application
+      dockerfile: $(Build.SourcesDirectory)/application/Dockerfile
