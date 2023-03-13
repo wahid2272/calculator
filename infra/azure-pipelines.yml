@@ -49,8 +49,8 @@ stages:
 
     - task: AzureKeyVault@2
       inputs:
-        azureSubscription: $(azureResourceManagerConnection)
-        KeyVaultName: $(KeyVaultName)
+        azureSubscription: 'Resource Group for Prod Env'
+        KeyVaultName: 'calculator-prod'
         SecretsFilter: '*'
         RunAsPreJob: false
 
