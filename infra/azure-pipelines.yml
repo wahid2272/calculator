@@ -15,14 +15,22 @@ stages:
     displayName: 'Deploy to staging environment'
 
     steps:
+
+    - task: AzureKeyVault@2
+      inputs:
+        azureSubscription: 'Resource Group fro Staging Env'
+        KeyVaultName: 'calculator-staging'
+        SecretsFilter: '*'
+        RunAsPreJob: false
+
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: 'Resource Group fro Staging Env'
-        subscriptionId: '7122b890-4d38-46fb-8c3d-9e0a76c39cc6'
+        azureResourceManagerConnection: $(azureResourceManagerConnection)
+        subscriptionId: $(subscriptionId)
         action: 'Create Or Update Resource Group'
-        resourceGroupName: 'app_service_staging'
-        location: 'North Europe'
+        resourceGroupName: $(resourceGroupName)
+        location: $(location)
         templateLocation: 'Linked artifact'
         csmFile: $(Build.SourcesDirectory)/infra/azuredeploy.json
         csmParametersFile: $(Build.SourcesDirectory)/infra/staging.parameters.json
@@ -38,14 +46,22 @@ stages:
     displayName: 'Deploy to production environment'
     
     steps:
+
+    - task: AzureKeyVault@2
+      inputs:
+        azureSubscription: $(azureResourceManagerConnection)
+        KeyVaultName: $(KeyVaultName)
+        SecretsFilter: '*'
+        RunAsPreJob: false
+
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: 'Resource Group for Prod Env'
-        subscriptionId: '7122b890-4d38-46fb-8c3d-9e0a76c39cc6'
+        azureResourceManagerConnection: $(azureResourceManagerConnection)
+        subscriptionId: $(subscriptionId)
         action: 'Create Or Update Resource Group'
-        resourceGroupName: 'app_service'
-        location: 'North Europe'
+        resourceGroupName: $(resourceGroupName)
+        location: $(location)
         templateLocation: 'Linked artifact'
         csmFile: $(Build.SourcesDirectory)/infra/azuredeploy.json
         csmParametersFile: $(Build.SourcesDirectory)/infra/production.parameters.json
