@@ -70,5 +70,6 @@ stages:
         templateLocation: 'Linked artifact'
         csmFile: $(csmFileTemplate-prod)
         csmParametersFile: $(csmParametersFile-prod)
+        overrideParameters: '-subscriptionId $(subscriptionId) -location "$(location)" -hostingPlanName $(hostingPlanName) -serverFarmResourceGroup $(serverFarmResourceGroup) -linuxFxVersion $(linuxFxVersion) -dockerRegistryUrl $(dockerRegistryUrl) -dockerRegistryUsername $(dockerRegistryUsername) -dockerRegistryPassword $(dockerRegistryPassword)'
         deploymentMode: 'Incremental'
       
