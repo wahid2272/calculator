@@ -8,6 +8,7 @@ trigger:
 
 variables:
 - group: my-calculator-staging
+- group: my-calculator-prod
 
 stages:
 - stage: app_service_staging
@@ -21,22 +22,22 @@ stages:
 
     - task: AzureKeyVault@2
       inputs:
-        azureSubscription: $(azureSubscription)
-        KeyVaultName: $(KeyVaultName)
+        azureSubscription: $(azureSubscription-staging)
+        KeyVaultName: $(KeyVaultName-staging)
         SecretsFilter: '*'
         RunAsPreJob: false
 
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: 'Resource Group fro Staging Env'
+        azureResourceManagerConnection: $(azureSubscription-staging)
         subscriptionId: $(subscriptionId)
         action: 'Create Or Update Resource Group'
         resourceGroupName: $(resourceGroupName)
         location: $(location)
         templateLocation: 'Linked artifact'
-        csmFile: $(Build.SourcesDirectory)/infra/azuredeploy.json
-        csmParametersFile: $(Build.SourcesDirectory)/infra/staging.parameters.json
+        csmFile: $(csmFileTemplate-staging)
+        csmParametersFile: $(csmParametersFile-staging)
         deploymentMode: 'Incremental'
 
 
@@ -52,21 +53,21 @@ stages:
 
     - task: AzureKeyVault@2
       inputs:
-        azureSubscription: 'Resource Group for Prod Env'
-        KeyVaultName: 'calculator-prod'
+        azureSubscription: $(azureSubscription-prod)
+        KeyVaultName: $(KeyVaultName-prod)
         SecretsFilter: '*'
         RunAsPreJob: false
 
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: 'Resource Group for Prod Env'
+        azureResourceManagerConnection: $(azureSubscription-prod)
         subscriptionId: $(subscriptionId)
         action: 'Create Or Update Resource Group'
         resourceGroupName: $(resourceGroupName)
         location: $(location)
         templateLocation: 'Linked artifact'
-        csmFile: $(Build.SourcesDirectory)/infra/azuredeploy.json
-        csmParametersFile: $(Build.SourcesDirectory)/infra/production.parameters.json
+        csmFile: $(csmFileTemplate-prod)
+        csmParametersFile: $(csmParametersFile-prod)
         deploymentMode: 'Incremental'
       
