@@ -26,7 +26,7 @@ stages:
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: $(azureResourceManagerConnection)
+        azureResourceManagerConnection: 'Resource Group fro Staging Env'
         subscriptionId: $(subscriptionId)
         action: 'Create Or Update Resource Group'
         resourceGroupName: $(resourceGroupName)
@@ -57,7 +57,7 @@ stages:
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: $(azureResourceManagerConnection)
+        azureResourceManagerConnection: 'Resource Group for Prod Env'
         subscriptionId: $(subscriptionId)
         action: 'Create Or Update Resource Group'
         resourceGroupName: $(resourceGroupName)
