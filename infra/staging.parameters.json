@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "subscriptionId": {
-            "value": "subscriptionId"
+            "value": "subscriptionId" 
         },
         "name": {
             "value": "my-calculator-staging"

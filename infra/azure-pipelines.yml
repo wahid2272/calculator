@@ -70,6 +70,5 @@ stages:
         templateLocation: 'Linked artifact'
         csmFile: $(csmFileTemplate-prod)
         csmParametersFile: $(csmParametersFile-prod)
-        overrideParameters: ''
         deploymentMode: 'Incremental'
       
