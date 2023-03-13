@@ -3,19 +3,19 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "subscriptionId": {
-            "value": "7122b890-4d38-46fb-8c3d-9e0a76c39cc6"
+            "value": "subscriptionId"
         },
         "name": {
             "value": "my-calculator-staging"
         },
         "location": {
-            "value": "North Europe"
+            "value": "location"
         },
         "hostingPlanName": {
-            "value": "staging-calculator"
+            "value": "hostingPlanName"
         },
         "serverFarmResourceGroup": {
-            "value": "app_service_staging"
+            "value": "serverFarmResourceGroup"
         },
         "alwaysOn": {
             "value": false
@@ -39,16 +39,16 @@
             "value": "0"
         },
         "linuxFxVersion": {
-            "value": "DOCKER|calculatorstaging.azurecr.io/wahid2272calculator_build-docker:latest"
+            "value": "linuxFxVersion"
         },
         "dockerRegistryUrl": {
-            "value": "https://calculatorstaging.azurecr.io"
+            "value": "dockerRegistryUrl"
         },
         "dockerRegistryUsername": {
-            "value": "calculatorStaging"
+            "value": "dockerRegistryUsername"
         },
         "dockerRegistryPassword": {
-            "value": "/KVm3pmn8xPEdc/rQR5xToLJXAHZ5OtFf0QSems4s7+ACRAh1fRs"
+            "value": "dockerRegistryPassword"
         },
         "dockerRegistryStartupCommand": {
             "value": ""
