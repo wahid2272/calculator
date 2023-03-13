@@ -6,6 +6,9 @@ trigger:
     include:
     - infra/*
 
+variables:
+- group: my-calculator-staging
+
 stages:
 - stage: app_service_staging
   displayName: 'Create app service for staging'
@@ -18,8 +21,8 @@ stages:
 
     - task: AzureKeyVault@2
       inputs:
-        azureSubscription: 'Resource Group fro Staging Env'
-        KeyVaultName: 'calculator-staging'
+        azureSubscription: $(azureSubscription)
+        KeyVaultName: $(KeyVaultName)
         SecretsFilter: '*'
         RunAsPreJob: false
 
