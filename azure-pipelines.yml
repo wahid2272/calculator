@@ -5,6 +5,7 @@ trigger:
   paths:
     exclude:
     - infra/* 
+    - README.md
 
 variables:
 - group: my-calculator-staging
